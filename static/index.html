@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promtior | AI – Chatbot Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #14141c;
+      --text: #f5f5f7;
+      --text-muted: #a1a1aa;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --border: #27272a;
+      --success: #22c55e;
+      --error: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .logo span { color: var(--accent); }
+    .header a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .header a:hover { color: var(--text); }
+    .hero {
+      text-align: center;
+      padding: 3rem 1.5rem 2rem;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+    .chat-wrap {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 1.5rem 2rem;
+    }
+    .chat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .input-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    input::placeholder { color: var(--text-muted); }
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    button {
+      padding: 0.75rem 1.25rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    button:hover { background: var(--accent-hover); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    #respuesta {
+      margin-top: 1.25rem;
+      padding: 1.25rem;
+      min-height: 5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      white-space: pre-wrap;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    #respuesta.vacio { color: var(--text-muted); }
+    #respuesta.error { color: var(--error); }
+    .footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">Promtior <span>| AI</span></div>
+    <a href="https://www.promtior.ai/" target="_blank" rel="noopener">Ir a promtior.ai</a>
+  </header>
+
+  <section class="hero">
+    <h1>Building Human-AI Collaboration</h1>
+    <p>Probá nuestro asistente. Preguntá sobre servicios, soluciones GenAI o la empresa.</p>
+  </section>
+
+  <div class="chat-wrap">
+    <div class="chat-card">
+      <label for="pregunta" style="font-weight: 500;">Tu pregunta</label>
+      <div class="input-row">
+        <input type="text" id="pregunta" placeholder="Ej: ¿Qué servicios ofrece Promtior?" autocomplete="off">
+        <button type="button" id="enviar">Enviar</button>
+      </div>
+      <div id="respuesta" class="vacio">La respuesta aparecerá aquí.</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <a href="https://www.promtior.ai/" target="_blank" rel="noopener">Promtior.ai</a> · Accelerate your GenAI adoption
+  </footer>
+
+  <script>
+    const pregunta = document.getElementById('pregunta');
+    const enviar = document.getElementById('enviar');
+    const respuesta = document.getElementById('respuesta');
+
+    function mostrar(texto, esError) {
+      respuesta.textContent = texto || 'La respuesta aparecerá aquí.';
+      respuesta.classList.toggle('vacio', !texto || texto === 'Cargando…');
+      respuesta.classList.toggle('error', !!esError);
+    }
+
+    enviar.addEventListener('click', async () => {
+      const texto = pregunta.value.trim();
+      if (!texto) return;
+      enviar.disabled = true;
+      mostrar('Cargando…');
+      try {
+        const res = await fetch('/chat/invoke', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input: { input: texto }})
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          mostrar(data.detail || 'Error en el servidor', true);
+          return;
+        }
+        mostrar(data.output ?? data.answer ?? JSON.stringify(data));
+      } catch (e) {
+        mostrar('Error de conexión: ' + e.message, true);
+      } finally {
+        enviar.disabled = false;
+      }
+    });
+
+    pregunta.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') enviar.click();
+    });
+  </script>
+</body>
+</html>

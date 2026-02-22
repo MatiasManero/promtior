@@ -1,0 +1,9 @@
+# Configuración para deploy en Railway
+# https://docs.railway.app/reference/config-as-code
+
+[build]
+# Nixpacks detecta Python por requirements.txt
+
+[deploy]
+# Railway inyecta PORT; el servidor debe escuchar en 0.0.0.0:PORT
+startCommand = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"

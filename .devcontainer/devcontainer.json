@@ -1,0 +1,23 @@
+{
+  "name": "Promtior (Linux)",
+  "image": "promtior:latest",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+  "workspaceFolder": "/app",
+  "onCreateCommand": "source .venv/bin/activate",
+  "postStartCommand": "echo 'Dev container listo. Para Ollama: ejecutá ollama serve (en otra terminal) y luego ollama pull nomic-embed-text && ollama pull llama2'",
+  "forwardPorts": [8000, 11434],
+  "portsAttributes": {
+    "8000": { "label": "FastAPI", "onAutoForward": "notify" },
+    "11434": { "label": "Ollama", "onAutoForward": "silent" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance"],
+      "settings": {
+        "python.defaultInterpreterPath": "/app/.venv/bin/python",
+        "python.terminal.activateEnvironment": true
+      }
+    }
+  },
+  "remoteUser": "root"
+}
