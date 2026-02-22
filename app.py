@@ -15,11 +15,10 @@ if __name__ == "__main__":
     configure_logging()
     log = get_logger(__name__)
     config = settings()
-    port = int(os.environ.get("PORT", config.app.port))
-    log.info("Iniciando servidor uvicorn", host=config.app.host, port=port)
+    log.info("Iniciando servidor uvicorn", host=config.app.host, port=config.app.port)
     uvicorn.run(
         "app.main:app",
         host=config.app.host,
-        port=port,
+        port=config.app.port,
         reload=config.app.reload,
     )
