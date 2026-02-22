@@ -31,10 +31,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Usuario no root para ejecutar la aplicación
 RUN useradd --uid 1001 --gid 1000 --shell /bin/bash --create-home user \
     && mkdir -p /app/data \
-    && chown -R user:user /app
+    && chown -R user:1000 /app
 
 EXPOSE 8000
 
 USER user
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "app.py"]
