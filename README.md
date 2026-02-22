@@ -4,37 +4,30 @@ Chatbot con **arquitectura RAG** (Retrieval-Augmented Generation) sobre LangChai
 
 ## Funcionalidades
 
-- **RAG**: índice del sitio Promtior (carga, fragmentación, embeddings con OpenAI, vector store Chroma). Cada pregunta recupera los fragmentos más relevantes y el LLM responde en base a ese contexto.
-- Si no hay API key de OpenAI, se usa un **contexto estático** (fallback) para que la app siga funcionando.
+- **RAG**: índice del sitio Promtior (carga, fragmentación, embeddings con OpenAI u Ollama, vector store Chroma). Cada pregunta recupera los fragmentos más relevantes y el LLM responde en base a ese contexto.
+- **Traducción de consultas**: si el usuario pregunta en otro idioma (ej. inglés) y los embeddings están en español, la pregunta se traduce al español para el retriever y el LLM responde en el idioma del usuario.
 - Respuestas sobre servicios, GenAI, casos de uso, contacto, etc., basadas en el contenido real del sitio.
 
 ## Tecnologías
 
 - **LangChain**: cadenas, prompts, integración con LLMs y vector stores
-- **RAG**: WebBaseLoader (sitio Promtior) → RecursiveCharacterTextSplitter → OpenAI Embeddings → Chroma → retriever → prompt + LLM
+- **RAG**: WebBaseLoader (sitio Promtior) → RecursiveCharacterTextSplitter → Embeddings (OpenAI u Ollama) → Chroma → retriever → prompt + LLM
 - **LangServe**: API del chatbot
 - **FastAPI**: servidor web
-- **OpenAI**: embeddings (RAG) y opcionalmente LLM
-- **Ollama + LLaMA2**: alternativa como LLM si no usás OpenAI
+- **OpenAI** u **Ollama**: LLM y embeddings (configurable por variables de entorno)
 
 ## Instalación
 
-1. Clona el repositorio o descarga los archivos
+1. Clona el repositorio o descarga los archivos.
 
 2. Instala las dependencias:
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 3. Configura las variables de entorno (copia `.env.example` a `.env`):
-
-   **Para RAG (recomendado)**  
-   Los embeddings del RAG pueden ser:
-   - **OpenAI**: configurá `PROMTIOR_CHAIN_OPENAI_API_KEY`. La primera vez se indexa el sitio y se guarda en `./data/chroma_promtior/openai`.
-   - **Ollama** (sin API key): instalá Ollama, ejecutá `ollama pull nomic-embed-text` y dejá Ollama corriendo. El índice se guarda en `./data/chroma_promtior/ollama`.
-
-   **Solo LLM (sin RAG)**  
-   Si no hay API key ni Ollama disponible, el chatbot usa contexto estático. Para el LLM: misma key de OpenAI o Ollama (`ollama pull llama2` y Ollama en marcha).
+   - **OpenAI**: configurá `PROMTIOR_OPENAI_API_KEY` para usar OpenAI como LLM y para embeddings. El índice se guarda en `./data/chroma_promtior/openai`.
+   - **Ollama** (sin API key): instalá Ollama, ejecutá `ollama pull nomic-embed-text` (y opcionalmente `ollama pull llama2` para el chat) y dejá Ollama corriendo. El índice se guarda en `./data/chroma_promtior/ollama`.
 
 ## Uso
 
@@ -44,31 +37,21 @@ pip install -r requirements.txt
 python app.py
 ```
 
-O usando uvicorn directamente:
+O con uvicorn directamente:
 
 ```bash
-uvicorn app:app --host 0.0.0.0 --port 8000
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-### Consola interactiva (CLI)
+### Página web para interactuar con el chat
 
-Para chatear desde la terminal:
-
-```bash
-python -m cli.console
-```
-
-Escribe tu pregunta y pulsa Enter. Para salir: `salir`, `exit` o Ctrl+C.
-
-### Demo web
-
-Con el servidor en marcha, abrí en el navegador:
+Existe una **página `index.html`** para usar el chatbot desde el navegador. Con el servidor en marcha, abrí:
 
 **http://localhost:8000/demo/**
 
-Ahí podés escribir preguntas y ver las respuestas del chatbot (una página sencilla para demostración).
+Ahí se sirve la interfaz (`static/index.html`) donde podés escribir preguntas y ver las respuestas del chatbot en tiempo real.
 
-### Probar el chatbot
+### Probar el chatbot por API
 
 1. **LangServe (POST /chat/invoke):**
    ```bash
@@ -77,84 +60,34 @@ Ahí podés escribir preguntas y ver las respuestas del chatbot (una página sen
      -d '{"input": "¿Qué servicios ofrece Promtior?"}'
    ```
 
-2. **Documentación interactiva:**
-   - Abre http://localhost:8000/docs y prueba `/chat/invoke`.
+2. **Documentación interactiva:**  
+   Abrí http://localhost:8000/docs y probá `/chat/invoke`.
 
-3. **Script de prueba:**
-   ```bash
-   python chatbot.py
-   ```
-
-## Despliegue
-
-### Docker
-
-Se incluye un `Dockerfile` para facilitar el despliegue:
-
-```bash
-# Construir la imagen
-docker build -t promtior-chatbot .
-
-# Ejecutar el contenedor
-docker run -p 8000:8000 --env-file .env promtior-chatbot
-```
-
-### AWS (EC2 / ECS / Lambda)
-
-1. **EC2:**
-   - Crea una instancia EC2
-   - Instala Docker
-   - Ejecuta el contenedor Docker
-
-2. **ECS:**
-   - Crea un cluster ECS
-   - Crea una definición de tarea con el Dockerfile
-   - Despliega el servicio
-
-3. **Lambda:**
-   - Usa AWS Lambda con contenedores Docker
-   - Empaqueta la aplicación en un contenedor compatible con Lambda
-
-### Azure (App Service / Container Instances)
-
-1. **App Service:**
-   - Crea un App Service
-   - Configura el despliegue desde Docker Hub o Azure Container Registry
-   - Establece las variables de entorno
-
-2. **Container Instances:**
-   - Crea una instancia de contenedor
-   - Usa el Dockerfile proporcionado
-   - Configura las variables de entorno
-
-### Variables de entorno en producción
-
-Asegúrate de configurar las variables de entorno según tu proveedor de nube:
-- `OPENAI_API_KEY`: Si usas OpenAI
-- O asegúrate de que Ollama esté disponible si usas esa opción
-
-## Estructura del Proyecto
+## Estructura del proyecto
 
 ```
-promtior/
-├── app.py                 # Aplicación FastAPI con LangServe
-├── chatbot.py             # Script de prueba del chatbot
-├── promtior_info.py       # Información sobre Promtior
-├── requirements.txt       # Dependencias de Python
-├── Dockerfile             # Configuración Docker
-├── .env.example          # Ejemplo de variables de entorno
-└── README.md             # Este archivo
+├── app.py                    # Punto de entrada (uvicorn)
+├── app/                      # FastAPI y LangServe
+├── chain/                    # RAG, prompts, proveedores (OpenAI/Ollama), vector stores
+├── config/                   # Configuración (PROMTIOR_*)
+├── logger/                   # Logging (structlog, console / 12fa)
+├── static/
+│   └── index.html            # Página para interactuar con el chat (/demo/)
+├── requirements.txt
+├── .env.example
+├── Dockerfile
+└── README.md
 ```
 
 ## Endpoints de la API
 
 - `GET /`: Información sobre la API
 - `GET /health`: Verificación de salud del servicio
+- `GET /demo/`: Página web para chatear (index.html)
 - `POST /chat/invoke`: Endpoint principal para chatear con el bot
 - `GET /docs`: Documentación interactiva (Swagger UI)
 
 ## Notas
 
-- El chatbot está configurado para responder solo preguntas sobre Promtior basándose en la información proporcionada en `promtior_info.py`
-- Puedes modificar la información en `promtior_info.py` para actualizar el conocimiento del chatbot
-- Para producción, considera agregar autenticación, rate limiting y logging adicional
+- El conocimiento del chatbot proviene del **contenido indexado** del sitio de Promtior (URLs en `PROMTIOR_WEB_*`). No hay contexto estático: si RAG no está disponible, la app no arranca.
+- Para producción, considerá autenticación, rate limiting y las variables de entorno indicadas en `.env.example`.

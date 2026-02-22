@@ -15,9 +15,6 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
     && rm -rf /var/lib/apt/lists/* \
     && ln -sf /usr/bin/python3 /usr/bin/python
 
-# Ollama (LLM y embeddings locales)
-RUN curl -fsSL https://ollama.com/install.sh | sh
-
 WORKDIR /app
 
 # Ambiente virtual al mismo nivel que la aplicación (/app/.venv)
@@ -32,8 +29,7 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Usuario no root para ejecutar la aplicación
-RUN groupadd --gid 1000 user \
-    && useradd --uid 1000 --gid user --shell /bin/bash --create-home user \
+RUN useradd --uid 1001 --gid 1000 --shell /bin/bash --create-home user \
     && mkdir -p /app/data \
     && chown -R user:user /app
 
