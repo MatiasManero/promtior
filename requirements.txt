@@ -17,3 +17,4 @@ sse-starlette>=0.1.0
 structlog>=24.1.0
 langdetect>=1.0.9
 deep-translator>=1.11.0
+html2text>=2020.1.16
