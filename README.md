@@ -51,6 +51,10 @@ Existe una **página `index.html`** para usar el chatbot desde el navegador. Con
 
 Ahí se sirve la interfaz (`static/index.html`) donde podés escribir preguntas y ver las respuestas del chatbot en tiempo real.
 
+### Versión pública
+
+La página para uso público está disponible en [promtior-production-cc0b.up.railway.app](https://promtior-production-cc0b.up.railway.app/). Se recomienda acceder a [/demo](https://promtior-production-cc0b.up.railway.app/demo) para usar el chat.
+
 ### Probar el chatbot por API
 
 1. **LangServe (POST /chat/invoke):**
@@ -94,5 +98,4 @@ Ahí se sirve la interfaz (`static/index.html`) donde podés escribir preguntas 
 
 ## Notas
 
-- El conocimiento del chatbot proviene del **contenido indexado** del sitio de Promtior (URLs en `PROMTIOR_WEB_*`). No hay contexto estático: si RAG no está disponible, la app no arranca.
-- Para producción, considerá autenticación, rate limiting y las variables de entorno indicadas en `.env.example`.
+- El conocimiento del chatbot proviene del **contenido indexado** del sitio de Promtior (URLs en `PROMTIOR_WEB_*`).
