@@ -2,7 +2,7 @@
 Consola interactiva para chatear con el bot de Promtior.
 """
 
-from chain import chain
+from rag import chain
 
 
 def run_console() -> None:

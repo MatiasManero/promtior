@@ -17,7 +17,7 @@ def settings() -> Settings:
 
 def __getattr__(name: str):
     if name == "translation":
-        from chain import translation
+        from rag import translation
         return translation
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 

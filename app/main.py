@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from langserve import add_routes
 
-from chain import chain as chat_chain
+from rag import chain as chat_chain
 from app.endpoints import router
 from config import settings
 from logger import configure_logging, get_logger

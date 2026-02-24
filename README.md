@@ -68,7 +68,7 @@ Ahí se sirve la interfaz (`static/index.html`) donde podés escribir preguntas 
 ```
 ├── app.py                    # Punto de entrada (uvicorn)
 ├── app/                      # FastAPI y LangServe
-├── chain/                    # RAG, prompts, proveedores (OpenAI/Ollama), vector stores
+├── rag/                      # RAG, prompts, proveedores (OpenAI/Ollama), vector stores
 ├── config/                   # Configuración (PROMTIOR_*)
 ├── logger/                   # Logging (structlog, console / 12fa)
 ├── static/
@@ -86,6 +86,11 @@ Ahí se sirve la interfaz (`static/index.html`) donde podés escribir preguntas 
 - `GET /demo/`: Página web para chatear (index.html)
 - `POST /chat/invoke`: Endpoint principal para chatear con el bot
 - `GET /docs`: Documentación interactiva (Swagger UI)
+
+## Documentación
+
+- **Project Overview y diagrama de componentes**: ver [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md)
+- **Diagrama Draw.io**: `docs/architecture.drawio` (abrir con [Draw.io](https://app.diagrams.net/), exportable a Lucidchart)
 
 ## Notas
 
